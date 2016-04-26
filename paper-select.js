@@ -207,7 +207,10 @@ Polymer({
   },
 
   _computeShowAddAction: function (nonmatching, input) {
-    return nonmatching && input.trim();
+    if (input) {
+      return nonmatching && input.trim();
+    }
+    return false;
   },
 
   _wrap: function (item) {
