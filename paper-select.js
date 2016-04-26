@@ -20,7 +20,7 @@ Polymer({
 
     _input: {
       type: Object,
-      value: function () {
+      value: function() {
         return this.$.input;
       },
     },
@@ -30,7 +30,7 @@ Polymer({
      */
     options: {
       type: Array,
-      value: function () {
+      value: function() {
         return [];
       },
     },
@@ -41,8 +41,7 @@ Polymer({
     input: {
       type: String,
       value: '',
-      notify
-: true,
+      notify: true,
       observer: '_inputChanged',
     },
 
@@ -56,7 +55,7 @@ Polymer({
     },
 
     /**
-     * Multuple selection mode, tags-like 
+     * Multuple selection mode, tags-like
      */
     multiple: {
       type: Boolean,
@@ -118,6 +117,24 @@ Polymer({
       reflectToAttribute: true,
     },
 
+    /**
+     * Bind Field to used for display
+     */
+    bindLabelField: {
+      type: String,
+      value: null,
+      reflectToAttribute: true,
+    },
+
+    /**
+     * Bind Field to use for value
+     */
+    bindValueField: {
+      type: String,
+      value: null,
+      reflectToAttribute: true,
+    },
+
     _showInput: {
       computed: '_computeShowInput(multiple, bindValue)'
     },
@@ -144,14 +161,14 @@ Polymer({
 
   // Element Lifecycle
 
-  created: function () {
+  created: function() {
     this.toggleClass('paper-input-input', true);
   },
 
-  ready: function () {
+  ready: function() {
 
     var self = this;
-    this.$.input.validate = function (value) {
+    this.$.input.validate = function(value) {
       return !self.required || !!self.bindValue;
     };
 
@@ -176,7 +193,7 @@ Polymer({
 
   },
 
-  attached: function () {
+  attached: function() {
     this.options = this.options || null;
     this.set('bindValue', this.bindValue || this.value || this._defaultValue);
     this.input = this.input || '';
@@ -184,11 +201,11 @@ Polymer({
 
   // Element Behavior
 
-  _inputChanged: function () {
+  _inputChanged: function() {
     // console.log('_inputChanged', arguments);    this._fixLabelState();
   },
 
-  _valueChanged: function () {
+  _valueChanged: function() {
     // console.log('_valueChanged', this, arguments);
     if (this.multiple)
       this.value = this.bindValue ? this.bindValue.map(this._formValueOf.bind(this)).join(',') : '';
@@ -198,22 +215,22 @@ Polymer({
     this._fixLabelState();
   },
 
-  _computeShowInput: function (multiple, bindValue) {
+  _computeShowInput: function(multiple, bindValue) {
     return multiple || !bindValue;
   },
 
-  _computeShowOptions: function (options, _showAddAction) {
+  _computeShowOptions: function(options, _showAddAction) {
     return options && options.length || _showAddAction;
   },
 
-  _computeShowAddAction: function (nonmatching, input) {
+  _computeShowAddAction: function(nonmatching, input) {
     if (input) {
       return nonmatching && input.trim();
     }
     return false;
   },
 
-  _wrap: function (item) {
+  _wrap: function(item) {
     return {
       item: item
     };
@@ -222,7 +239,7 @@ Polymer({
   /**
    * Resets component.
    */
-  reset: function () {
+  reset: function() {
     this.set('bindValue', this._defaultValue);
     this.clear();
   },
@@ -230,7 +247,7 @@ Polymer({
   /**
    * Resets component's input.
    */
-  clear: function () {
+  clear: function() {
     this.input = '';
     this.options = null;
     this.$.optionsMenu.selected = null;
@@ -242,85 +259,104 @@ Polymer({
    * @param {object} Select item data.
    * @return {string} Label.
    */
-  _labelOf: function (obj) {
-    // console.log('_labelOf', this.labelField, this.valueField, obj)
-    if (this.labelField === null && this.valueField === null)
+  _labelOf: function(obj) {
+    //console.log('_labelOf', this.labelField, this.valueField, obj, this.bindLabelField, this.bindValueField);
+    if (this.valueField === null && this.labelField === null && this.bindLabelField === null && this.bindValueField === null)
       return obj || '';
     return typeof obj === 'object' && obj ? obj[this.labelField || this.valueField] : obj || '';
   },
 
-  _valueOf: function (obj) {
-    // console.log('_valueOf', this.labelField, this.valueField, obj)
+  /**
+   * Prepares bind select/option item's display.
+   *
+   * @param {object} Select item data.
+   * @return {string} Label.
+   */
+  _bindLabelOf: function(obj) {
+    //console.log('_labelOf', this.labelField, this.valueField, obj, this.bindLabelField, this.bindValueField);
+    if (this.bindLabelField === null && this.bindValueField === null)
+      return _labelOf(obj);
+    return typeof obj === 'object' && obj ? obj[this.bindLabelField || this.bindValueField] : obj || '';
+  },
+
+  _valueOf: function(obj) {
+    //console.log('_valueOf', this.labelField, this.valueField, obj);
     if (this.valueField === null)
       return obj || '';
     return typeof obj === 'object' && obj ? obj[this.valueField] : obj || '';
   },
 
-  _formValueOf: function (obj) {
-    // console.log('_formValueOf', this.labelField, this.valueField, obj)
-    if (this.valueField === null && this.labelField === null)
+  _formValueOf: function(obj) {
+    //console.log('_formValueOf', this.labelField, this.valueField, obj, this.bindLabelField, this.bindValueField)
+    if (this.valueField === null && this.labelField === null && this.bindLabelField === null && this.bindValueField === null)
       return obj || '';
-    return typeof obj === 'object' && obj ? obj[this.valueField || this.labelField] : obj || '';
+    if (typeof obj === 'object') {
+      if (this.bindLabelField && this.bindValueField) {
+        return obj ? obj[this.bindValueField || this.bindLabelField] : obj || '';
+      }
+      return obj ? obj[this.valueField || this.labelField] : obj || '';
+    }
+    return obj || '';
   },
 
-  _highlight: function (label) {
+  _highlight: function(label) {
     return label.substr(0, this.input.length);
   },
 
-  _highlightAfter: function (label) {
+  _highlightAfter: function(label) {
     return label.substr(this.input.length);
   },
 
-  _focus: function () {
+  _focus: function() {
     this.$.input.focus();
   },
 
-  _fixLabelState: function () {
+  _fixLabelState: function() {
     // console.log('_fixLabelState')
     this.$.inputContainer._inputHasContent = !!this.bindValue || !!this.input;
   },
 
-  _onBlur: function () {
+  _onBlur: function() {
     // if (this.nonmatching && this.input && this.selectOnBlur)
     //   this._addItem();
     // if (!this.keepOnBlur)
     //   this.async(this.clear.bind(this), 100);
   },
 
-  _onKeyDown: function (event, detail) {
+  _onKeyDown: function(event, detail) {
     switch (event.keyCode) {
-    case 38: // up arrow
-    case 40: // down arrow
-      event.preventDefault();
-      event.stopPropagation();
-      break;
+      case 38: // up arrow
+      case 40: // down arrow
+        event.preventDefault();
+        event.stopPropagation();
+        break;
     }
   },
 
-  _cancelEvent: function (event, detail) {
+  _cancelEvent: function(event, detail) {
     event.preventDefault();
     event.stopPropagation();
   },
 
-  _preventDefault: function (event) {
+  _preventDefault: function(event) {
     event.preventDefault();
   },
 
-  _stopPropagation: function (event) {
+  _stopPropagation: function(event) {
     event.stopPropagation();
   },
 
-  _cancelKeyboardEventScroll: function (event, detail) {
+  _cancelKeyboardEventScroll: function(event, detail) {
     detail.keyboardEvent.preventDefault();
 
     // detail.keyboardEvent.stopPropagation();
   },
 
-  _elementTapped: function (event, detail) {
+  _elementTapped: function(event, detail) {
     this._focus();
   },
 
-  _removeSelectedItemTapped: function (event, detail) {
+  _removeSelectedItemTapped: function(event, detail) {
     if (this.multiple) {
       // var value = Polymer.dom(event).rootTarget.parentElement.value;
       var index = this.bindValue.indexOf(event.model.item);
@@ -336,41 +372,41 @@ Polymer({
     this.async(this._focus.bind(this));
   },
 
-  _onInputKeyDown: function (event, detail) {
+  _onInputKeyDown: function(event, detail) {
     switch (event.keyCode) {
       case 8: // backspace
         if (this.multiple && this.input.length === 0 && this.bindValue && this.bindValue.length > 0) {
           this.pop('bindValue');
         }
-  
+
         break;
       case 188: // comma
         if (this.nonmatching && this.input.trim()) {
           event.preventDefault();
         }
-  
+
         break;
     }
   },
 
-  _onInputKeyÛp: function (event, detail) {
+  _onInputKeyÛp: function(event, detail) {
     // console.log('_onInputKeyÛp', event, event.keyCode);
     switch (event.keyCode) {
-    case 188: // comma
-    case 13: // enter
-      if (this.nonmatching && this.input.trim()) {
-        this._addItem();
-      }
+      case 188: // comma
+      case 13: // enter
+        if (this.nonmatching && this.input.trim()) {
+          this._addItem();
+        }
 
-      break;
+        break;
 
-      // case 27: // escape
-      //   this.clear();
-      //   break;
-      // case 40: // down arrow
-      //   this.$.optionsMenu.focus();
-      //   this.$.optionsMenu.selected = 0;
-      //   break;
+        // case 27: // escape
+        //   this.clear();
+        //   break;
+        // case 40: // down arrow
+        //   this.$.optionsMenu.focus();
+        //   this.$.optionsMenu.selected = 0;
+        //   break;
     }
   },
 
@@ -387,21 +423,21 @@ Polymer({
   //   }
   // },
 
-  _focusOnOptionsPressed: function (event, detail) {
+  _focusOnOptionsPressed: function(event, detail) {
     this.$.optionsMenu.focus();
   },
 
-  _optionItemTapped: function (event, detail) {
+  _optionItemTapped: function(event, detail) {
     this.selectItem(event.model.item);
   },
 
-  _optionItemKeyUp: function (event, detail) {
+  _optionItemKeyUp: function(event, detail) {
     if (event.keyCode === 13) { // enter
       this.selectItem(event.model.item);
     }
   },
 
-  _addItem: function () {
+  _addItem: function() {
     var input = this.input.trim();
     if (!input)
       return;
@@ -409,12 +445,12 @@ Polymer({
       value: input
     };
     this.fire('adding-item', detail);
-    this.async(function () {
+    this.async(function() {
       this.selectItem(detail.value);
     });
   },
 
-  _addItemOnEnter: function (event, detail) {
+  _addItemOnEnter: function(event, detail) {
     if (event.keyCode === 13) {
       if (this.nonmatching && this.input.trim()) {
         this._addItem();
@@ -422,7 +458,7 @@ Polymer({
     }
   },
 
-  selectItem: function (item) {
+  selectItem: function(item) {
     if (this.multiple) {
       if (!this.bindValue)
         this.set('bindValue', [item]);
