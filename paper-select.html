@@ -14,12 +14,12 @@ A proper select input for the Polymer world.
 
 Example:
 
-    <paper-select id="select-input-1" 
-      multiple 
+    <paper-select id="select-input-1"
+      multiple
       label-field="name"
       bind-value="{{value}}"
       on-input-changed="inputChanged"
-      nonmatching on-adding-item="addItem" select-on-blur 
+      nonmatching on-adding-item="addItem" select-on-blur
       label="Select your favorite programming language"
     >
     </paper-select>
@@ -34,7 +34,7 @@ Example:
       else
         e.target.options = [];
     };
-    
+
     template.addItem = function(e) {
       var input = (e.detail.value || '').trim()
       e.detail.value = {
@@ -49,16 +49,16 @@ Example:
 -->
 <dom-module id="paper-select">
 
-  
+
   <template>
     <style include="paper-select-styles"></style>
 
-    <paper-input-container id="inputContainer" 
-      no-label-float="[[noLabelFloat]]" 
-      always-float-label="[[alwaysFloatLabel]]" 
+    <paper-input-container id="inputContainer"
+      no-label-float="[[noLabelFloat]]"
+      always-float-label="[[alwaysFloatLabel]]"
       auto-validate$="[[autoValidate]]"
-      disabled$="[[disabled]]" 
-      invalid="[[invalid]]" 
+      disabled$="[[disabled]]"
+      invalid="[[invalid]]"
       _input-selector="#input"
     >
 
@@ -71,7 +71,7 @@ Example:
           <template is="dom-if" if="{{multiple}}">
             <template is="dom-repeat" items="{{bindValue}}">
               <div class="selected-item">
-                <span>{{_labelOf(item)}}</span>
+                <span>{{_bindLabelOf(item)}}</span>
                 <a on-tap="_removeSelectedItemTapped" hidden$="[[readonly]]"></a>
               </div>
             </template>
@@ -79,28 +79,28 @@ Example:
 
           <template is="dom-if" if="{{!multiple}}">
             <div class="selected-item">
-              <span>{{_labelOf(bindValue)}}</span>
+              <span>{{_bindLabelOf(bindValue)}}</span>
               <a on-tap="_removeSelectedItemTapped" hidden$="[[readonly]]"></a>
             </div>
           </template>
 
         </template>
 
-        <input id="input" is="iron-input" 
-          type="text" 
-          hidden$="{{!_showInput}}" 
-          tabindex="0" 
-          class="paper-input-input" 
-          value="{{input::input}}" 
-          aria-labelledby$="[[_ariaLabelledBy]]" 
-          aria-describedby$="[[_ariaDescribedBy]]" 
-          disabled$="[[disabled]]" 
-          i-invalid="{{invalid}}" 
-          i-validator="[[validator]]" 
-          i-required$="[[required]]" 
-          autofocus$="[[autofocus]]" 
-          i-readonly$="[[readonly]]" 
-          on-keydown="_onInputKeyDown" 
+        <input id="input" is="iron-input"
+          type="text"
+          hidden$="{{!_showInput}}"
+          tabindex="0"
+          class="paper-input-input"
+          value="{{input::input}}"
+          aria-labelledby$="[[_ariaLabelledBy]]"
+          aria-describedby$="[[_ariaDescribedBy]]"
+          disabled$="[[disabled]]"
+          i-invalid="{{invalid}}"
+          i-validator="[[validator]]"
+          i-required$="[[required]]"
+          autofocus$="[[autofocus]]"
+          i-readonly$="[[readonly]]"
+          on-keydown="_onInputKeyDown"
           on-keyup="_onInputKeyÛp"
         >
 
@@ -148,5 +148,3 @@ Example:
   </template>
   <script src="paper-select.js"></script>
 </dom-module>
-
-
