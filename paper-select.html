@@ -7,6 +7,7 @@
 <link rel="import" href="../paper-menu/paper-menu.html">
 <link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
+<link rel="import" href="paper-select-styles.html">
 
 <!--
 A proper select input for the Polymer world.
@@ -48,9 +49,9 @@ Example:
 -->
 <dom-module id="paper-select">
 
-  <link rel="import" type="css" href="./paper-select.css">
-
+  
   <template>
+    <style include="paper-select-styles"></style>
 
     <paper-input-container id="inputContainer" 
       no-label-float="[[noLabelFloat]]" 
@@ -145,7 +146,7 @@ Example:
     </paper-input-container>
 
   </template>
-
+  <script src="paper-select.js"></script>
 </dom-module>
 
-<script src="paper-select.js"></script>
+
